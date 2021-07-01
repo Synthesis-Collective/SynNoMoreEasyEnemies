@@ -1,4 +1,4 @@
-# NoMoreEasyEnemies
+# Synthesis Patcher - No More Easy Enemies
 Rework NPC leveled list difficulty multipliers and settings to banish low-level enemies from your high-level dungeons.
 
 ELI5: No more level 1 draugers in your level 30 dungeon.
