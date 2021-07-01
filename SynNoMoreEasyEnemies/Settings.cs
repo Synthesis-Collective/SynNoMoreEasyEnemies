@@ -16,8 +16,8 @@ namespace SynNoMoreEasyEnemies
 		
 		// Which difficulty level to replace with "None"
 		[SynthesisOrder]
-		[SynthesisSettingName("Level Modifier to Replace")]
-		[SynthesisTooltip("The NPC Level Modifier that will be removed. Pick the Modifier with a multiplier closest to 1.0.\nIf your multipliers are vanilla, use 'Hard'.\nIf your multipliers are harder than normal (OWL, SRLEZ, etc), 'Medium' is probably your best bet.\nIf you want to be sure, open up xEdit with your load order and pick the fLeveledActorMult* Game Setting that is closest to 1.0.\n(XLCM Level Modifier on ACHR records will be deleted for this level modifer.)")]
+		[SynthesisSettingName("Spawn Difficulty to Replace")]
+		[SynthesisTooltip("The NPC Level Modifier that will be removed. Pick the Difficulty with a multiplier closest to 1.0.\nIf your multipliers are vanilla, use 'Hard'.\nIf your multipliers are harder than normal (OWL, SRLEZ, etc), 'Medium' is probably your best bet.\nIf you want to be sure, open up xEdit with your load order and pick the fLeveledActorMult* Game Setting that is closest to 1.0.\n(XLCM Level Modifier on ACHR records will be deleted for this level modifer.)")]
 		public LevelSetting LevelModifierToReplace { get; set; } = LevelSetting.Hard;
 
 		// Should we remove the "Calculate from All Levels" flag from all Leveled NPC lists?
