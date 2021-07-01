@@ -46,36 +46,37 @@ namespace SynNoMoreEasyEnemies
             //// Multipliers ////
             // Save existing (old) multipliers
             Dictionary<Level, float> oldMults = new();
-            Dictionary<Level, GameSetting> multOverrides = new();
+            Dictionary<Level, IGameSettingGetter> multGetters = new();
 
             foreach (var gmst in state.LoadOrder.PriorityOrder.OnlyEnabled().GameSetting().WinningOverrides()) {
+                // We only care about game settings that are floats
+                if (gmst is not IGameSettingFloatGetter floatGmst) continue;
+                if (floatGmst.Data == null) continue;
+
+                // Only for our interesting settings
                 if (gmst.EditorID?.Contains("fLeveledActorMultEasy") == true) {
-                    var gmstOverride = state.PatchMod.GameSettings.GetOrAddAsOverride(gmst);
-                    var mult = ((GameSettingFloat)gmstOverride).Data;
-                    oldMults.Add(Level.Easy, mult ?? 0f);
-                    multOverrides.Add(Level.Easy, gmstOverride);
-                    Console.WriteLine($"Old fLeveledActorMultEasy: {mult}");
+                    var multEasy = floatGmst.Data;
+                    oldMults.Add(Level.Easy, multEasy ?? 0f);
+                    multGetters.Add(Level.Easy, gmst);
+                    Console.WriteLine($"Old fLeveledActorMultEasy: {multEasy}");
                 }
                 else if (gmst.EditorID?.Contains("fLeveledActorMultMedium") == true) {
-                    var gmstOverride = state.PatchMod.GameSettings.GetOrAddAsOverride(gmst);
-                    var mult = ((GameSettingFloat)gmstOverride).Data;
-                    oldMults.Add(Level.Medium, mult ?? 0f);
-                    multOverrides.Add(Level.Medium, gmstOverride);
-                    Console.WriteLine($"Old fLeveledActorMultMedium: {mult}");
+                    var multMedium = floatGmst.Data;
+                    oldMults.Add(Level.Medium, multMedium ?? 0f);
+                    multGetters.Add(Level.Medium, gmst);
+                    Console.WriteLine($"Old fLeveledActorMultMedium: {multMedium}");
                 }
                 else if (gmst.EditorID?.Contains("fLeveledActorMultHard") == true) {
-                    var gmstOverride = state.PatchMod.GameSettings.GetOrAddAsOverride(gmst);
-                    var mult = ((GameSettingFloat)gmstOverride).Data;
-                    oldMults.Add(Level.Hard, mult ?? 0f);
-                    multOverrides.Add(Level.Hard, gmstOverride);
-                    Console.WriteLine($"Old fLeveledActorMultHard: {mult}");
+                    var multHard = floatGmst.Data;
+                    oldMults.Add(Level.Hard, multHard ?? 0f);
+                    multGetters.Add(Level.Hard, gmst);
+                    Console.WriteLine($"Old fLeveledActorMultHard: {multHard}");
                 }
                 else if (gmst.EditorID?.Contains("fLeveledActorMultVeryHard") == true) {
-                    var gmstOverride = state.PatchMod.GameSettings.GetOrAddAsOverride(gmst);
-                    var mult = ((GameSettingFloat)gmstOverride).Data;
-                    oldMults.Add(Level.VeryHard, mult ?? 0f);
-                    multOverrides.Add(Level.VeryHard, gmstOverride);
-                    Console.WriteLine($"Old fLeveledActorMultVeryHard: {mult}");
+                    var multVeryHard = floatGmst.Data;
+                    oldMults.Add(Level.VeryHard, multVeryHard ?? 0f);
+                    multGetters.Add(Level.VeryHard, gmst);
+                    Console.WriteLine($"Old fLeveledActorMultVeryHard: {multVeryHard}");
                 }
             }
 
@@ -83,20 +84,26 @@ namespace SynNoMoreEasyEnemies
             switch (LevelModifierToReplace) {
                 case Level.Medium: {
                         Console.WriteLine($"Per your settings, we will be replacing the 'Medium' modifier.");
-                        ((GameSettingFloat)multOverrides[Level.Medium]).Data = oldMults[Level.Easy];
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.Medium])).Data = oldMults[Level.Easy];
+                        Console.WriteLine($"New fLeveledActorMultMedium: {oldMults[Level.Easy]}");
                         break;
 					}
                 case Level.Hard: {
                         Console.WriteLine($"Per your settings, we will be replacing the 'Hard' modifier.");
-                        ((GameSettingFloat)multOverrides[Level.Medium]).Data = oldMults[Level.Easy];
-                        ((GameSettingFloat)multOverrides[Level.Hard]).Data = oldMults[Level.Medium];
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.Medium])).Data = oldMults[Level.Easy];
+                        Console.WriteLine($"New fLeveledActorMultMedium: {oldMults[Level.Easy]}");
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.Hard])).Data = oldMults[Level.Medium];
+                        Console.WriteLine($"New fLeveledActorMultHard: {oldMults[Level.Medium]}");
                         break;
                     }
                 case Level.VeryHard: {
                         Console.WriteLine($"Per your settings, we will be replacing the 'VeryHard' modifier.");
-                        ((GameSettingFloat)multOverrides[Level.Medium]).Data = oldMults[Level.Easy];
-                        ((GameSettingFloat)multOverrides[Level.Hard]).Data = oldMults[Level.Medium];
-                        ((GameSettingFloat)multOverrides[Level.VeryHard]).Data = oldMults[Level.Hard];
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.Medium])).Data = oldMults[Level.Easy];
+                        Console.WriteLine($"New fLeveledActorMultMedium: {oldMults[Level.Easy]}");
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.Hard])).Data = oldMults[Level.Medium];
+                        Console.WriteLine($"New fLeveledActorMultHard: {oldMults[Level.Medium]}");
+                        ((GameSettingFloat)state.PatchMod.GameSettings.GetOrAddAsOverride(multGetters[Level.VeryHard])).Data = oldMults[Level.Hard];
+                        Console.WriteLine($"New fLeveledActorMultVeryHard: {oldMults[Level.Hard]}");
                         break;
                     }
                 default: throw new NotImplementedException("Somehow you set a invalid Level Modifier.");
@@ -104,7 +111,7 @@ namespace SynNoMoreEasyEnemies
 
             //// Modifiers ////
             // Create a map between the old and new level modifiers
-            Dictionary<Level, Level> levelConversion = new();
+            Dictionary <Level, Level> levelConversion = new();
 
             // Fill the conversion map
             switch (LevelModifierToReplace) {
