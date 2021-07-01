@@ -35,13 +35,13 @@ namespace SynNoMoreEasyEnemies
             Console.WriteLine($"***********************");
 
             // Convert our custom enum setting to proper level
-            Level LevelModifierToReplace = new();
-            switch (settings.LevelModifierToReplace) {
-                case Settings.LevelSetting.Medium: { LevelModifierToReplace = Level.Medium; break; }
-                case Settings.LevelSetting.Hard: { LevelModifierToReplace = Level.Hard; break; }
-                case Settings.LevelSetting.VeryHard: { LevelModifierToReplace = Level.VeryHard; break; }
-                default: throw new NotImplementedException("Somehow you set a invalid Level Modifier.");
-            }
+            Level LevelModifierToReplace = settings.LevelModifierToReplace switch
+            {
+                Settings.LevelSetting.Medium => Level.Medium,
+                Settings.LevelSetting.Hard => Level.Hard,
+                Settings.LevelSetting.VeryHard => Level.VeryHard,
+                _ => throw new NotImplementedException("Somehow you set a invalid Level Modifier.")
+            };
 
             //// Multipliers ////
             // Save existing (old) multipliers
