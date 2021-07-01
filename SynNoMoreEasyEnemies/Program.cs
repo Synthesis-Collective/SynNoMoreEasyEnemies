@@ -52,28 +52,29 @@ namespace SynNoMoreEasyEnemies
             foreach (var gmst in state.LoadOrder.PriorityOrder.OnlyEnabled().GameSetting().WinningOverrides()) {
                 // We only care about game settings that are floats
                 if (gmst is not IGameSettingFloatGetter floatGmst) continue;
+                if (floatGmst.EditorID == null) continue;
                 if (floatGmst.Data == null) continue;
 
                 // Only for our interesting settings
-                if (gmst.EditorID?.Contains("fLeveledActorMultEasy") == true) {
+                if (floatGmst.EditorID.Contains("fLeveledActorMultEasy")) {
                     var multEasy = floatGmst.Data;
                     oldMults.Add(Level.Easy, multEasy ?? 0f);
                     multGetters.Add(Level.Easy, gmst);
                     Console.WriteLine($"Old fLeveledActorMultEasy: {multEasy}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultMedium") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultMedium")) {
                     var multMedium = floatGmst.Data;
                     oldMults.Add(Level.Medium, multMedium ?? 0f);
                     multGetters.Add(Level.Medium, gmst);
                     Console.WriteLine($"Old fLeveledActorMultMedium: {multMedium}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultHard") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultHard")) {
                     var multHard = floatGmst.Data;
                     oldMults.Add(Level.Hard, multHard ?? 0f);
                     multGetters.Add(Level.Hard, gmst);
                     Console.WriteLine($"Old fLeveledActorMultHard: {multHard}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultVeryHard") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultVeryHard")) {
                     var multVeryHard = floatGmst.Data;
                     oldMults.Add(Level.VeryHard, multVeryHard ?? 0f);
                     multGetters.Add(Level.VeryHard, gmst);
