@@ -60,10 +60,10 @@ If enabled, all Leveled NPC lists will be updated to remove the "Calculate From 
 
 
 ## FAQ
-#### Will this break things?
+### Will this break things?
 I don't think so. You're using the same leveled lists that you were before, all we're doing is influencing which NPC will get selected. If you want to be extra safe, disable the "Leveled NPC lists prefer player-level NPCs" setting.
 
 As a precaution, you could create a save before entering a new interior area with enemies. Once you enter a dungeon, the enemies are generated and saved into your next save file, and it is not simple to regenerate them.
 
-#### Why are there still a few level 1 enemies?!?
+### Why are there still a few level 1 enemies?!?
 Bethesda, in its infinite wisdom, has statically set some spawns to use specific NPCs rather than leveled lists. These NPCs are often set to level 1 and do not scale with the player. Call Todd and ask him.
