@@ -141,7 +141,7 @@ namespace SynNoMoreEasyEnemies
             foreach (var achr in state.LoadOrder.PriorityOrder.OnlyEnabled().PlacedNpc().WinningContextOverrides(state.LinkCache)) {
                 // If the ACHR has no base, skip it
                 // Not even sure this is possible
-                if (achr.Record.Base == null) { continue; }
+                if (achr.Record.Base.IsNull) { continue; }
 
                 // If the ACHR has no Level Modifier, skip it                
                 if (achr.Record.LevelModifier == null) { continue; }
