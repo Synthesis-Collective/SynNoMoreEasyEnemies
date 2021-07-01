@@ -175,6 +175,7 @@ namespace SynNoMoreEasyEnemies
                         Console.WriteLine($"Processed {lvlnCount} records.");
                     }
                 }
+                Console.WriteLine($"Processed {lvlnCount} records.");
             }
         }
     }
