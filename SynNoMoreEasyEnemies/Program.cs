@@ -5,6 +5,7 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using System.Threading.Tasks;
+using Noggog;
 
 namespace SynNoMoreEasyEnemies
 {
@@ -174,7 +175,7 @@ namespace SynNoMoreEasyEnemies
 
                     if (lvln.Flags.HasFlag(LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer)) {
                         var lvlnOverride = state.PatchMod.LeveledNpcs.GetOrAddAsOverride(lvln);
-                        lvlnOverride.Flags = (int)lvlnOverride.Flags - LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer;
+                        lvlnOverride.Flags = lvlnOverride.Flags.SetFlag(LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, false);
                     }
 
                     lvlnCount++;
