@@ -21,7 +21,7 @@ By default, Skyrim uses the following spawn difficulty (leveled actors) multipli
 
 Critically, if a spawn does NOT have a difficulty set, the multiplier used is a static 1.00.  We can abuse this fact to avoid the issue with the "Easy" spawn difficulty.
 
-If you leave the "Level Modifier to Replace" setting at the default of Hard, NoMoreEasyEnemies will do the following:
+If you leave the "Spawn Difficulty to Replace" setting at the default of Hard, NoMoreEasyEnemies will do the following:
 - Change fLeveledActorMultMedium to 0.33 (new Easy)
 - Change fLeveledActorMultHard to 0.67 (new Medium)
 - For all enemy spawns (Placed NPCs), if the old difficulty setting was "Easy", change it to "Medium"
