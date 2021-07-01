@@ -153,10 +153,10 @@ namespace SynNoMoreEasyEnemies
                     IPlacedNpc achrOverride = achr.GetOrAddAsOverride(state.PatchMod);
                     achrOverride.LevelModifier = null;
 				}
-                else if (levelConversion.ContainsKey((Level)achr.Record.LevelModifier)) {
+                else if (levelConversion.ContainsKey(achr.Record.LevelModifier.Value)) {
                     // Create override
                     IPlacedNpc achrOverride = achr.GetOrAddAsOverride(state.PatchMod);
-                    achrOverride.LevelModifier = levelConversion[(Level)achr.Record.LevelModifier];
+                    achrOverride.LevelModifier = levelConversion[achr.Record.LevelModifier.Value];
                 }
 
                 achrCount++;
