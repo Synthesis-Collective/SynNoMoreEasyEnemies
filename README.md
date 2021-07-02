@@ -1,8 +1,6 @@
 # Synthesis Patcher - No More Easy Enemies
 Rework NPC leveled list difficulty multipliers and settings to banish low-level enemies from your high-level dungeons.
 
-ELI5: No more level 1 draugers in your level 30 dungeon.
-
 ## Wait, what?
 The way Skyrim chooses which NPC to place in a dungeon is...complicated. Long story short, it uses a combination of your level, actor multipliers, the spawn's difficulty setting, and some flags to determine which level of an NPC is standing in a particular spot. 
 
