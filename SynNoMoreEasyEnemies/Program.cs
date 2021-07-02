@@ -5,6 +5,7 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using System.Threading.Tasks;
+using Noggog;
 
 namespace SynNoMoreEasyEnemies
 {
@@ -35,13 +36,13 @@ namespace SynNoMoreEasyEnemies
             Console.WriteLine($"***********************");
 
             // Convert our custom enum setting to proper level
-            Level LevelModifierToReplace = new();
-            switch (settings.LevelModifierToReplace) {
-                case Settings.LevelSetting.Medium: { LevelModifierToReplace = Level.Medium; break; }
-                case Settings.LevelSetting.Hard: { LevelModifierToReplace = Level.Hard; break; }
-                case Settings.LevelSetting.VeryHard: { LevelModifierToReplace = Level.VeryHard; break; }
-                default: throw new NotImplementedException("Somehow you set a invalid Level Modifier.");
-            }
+            Level LevelModifierToReplace = settings.LevelModifierToReplace switch
+            {
+                Settings.LevelSetting.Medium => Level.Medium,
+                Settings.LevelSetting.Hard => Level.Hard,
+                Settings.LevelSetting.VeryHard => Level.VeryHard,
+                _ => throw new NotImplementedException("Somehow you set a invalid Level Modifier.")
+            };
 
             //// Multipliers ////
             // Save existing (old) multipliers
@@ -51,28 +52,29 @@ namespace SynNoMoreEasyEnemies
             foreach (var gmst in state.LoadOrder.PriorityOrder.OnlyEnabled().GameSetting().WinningOverrides()) {
                 // We only care about game settings that are floats
                 if (gmst is not IGameSettingFloatGetter floatGmst) continue;
+                if (floatGmst.EditorID == null) continue;
                 if (floatGmst.Data == null) continue;
 
                 // Only for our interesting settings
-                if (gmst.EditorID?.Contains("fLeveledActorMultEasy") == true) {
+                if (floatGmst.EditorID.Contains("fLeveledActorMultEasy")) {
                     var multEasy = floatGmst.Data;
                     oldMults.Add(Level.Easy, multEasy ?? 0f);
                     multGetters.Add(Level.Easy, gmst);
                     Console.WriteLine($"Old fLeveledActorMultEasy: {multEasy}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultMedium") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultMedium")) {
                     var multMedium = floatGmst.Data;
                     oldMults.Add(Level.Medium, multMedium ?? 0f);
                     multGetters.Add(Level.Medium, gmst);
                     Console.WriteLine($"Old fLeveledActorMultMedium: {multMedium}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultHard") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultHard")) {
                     var multHard = floatGmst.Data;
                     oldMults.Add(Level.Hard, multHard ?? 0f);
                     multGetters.Add(Level.Hard, gmst);
                     Console.WriteLine($"Old fLeveledActorMultHard: {multHard}");
                 }
-                else if (gmst.EditorID?.Contains("fLeveledActorMultVeryHard") == true) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultVeryHard")) {
                     var multVeryHard = floatGmst.Data;
                     oldMults.Add(Level.VeryHard, multVeryHard ?? 0f);
                     multGetters.Add(Level.VeryHard, gmst);
@@ -141,10 +143,10 @@ namespace SynNoMoreEasyEnemies
             foreach (var achr in state.LoadOrder.PriorityOrder.OnlyEnabled().PlacedNpc().WinningContextOverrides(state.LinkCache)) {
                 // If the ACHR has no base, skip it
                 // Not even sure this is possible
-                if (achr.Record.Base == null) { continue; }
+                if (achr.Record.Base.IsNull) continue;
 
                 // If the ACHR has no Level Modifier, skip it                
-                if (achr.Record.LevelModifier == null) { continue; }
+                if (achr.Record.LevelModifier == null) continue;
 
                 // If the Level Modifier is the one we're replacing, delete it
                 if (achr.Record.LevelModifier == LevelModifierToReplace) {
@@ -152,10 +154,10 @@ namespace SynNoMoreEasyEnemies
                     IPlacedNpc achrOverride = achr.GetOrAddAsOverride(state.PatchMod);
                     achrOverride.LevelModifier = null;
 				}
-                else if (levelConversion.ContainsKey((Level)achr.Record.LevelModifier)) {
+                else if (levelConversion.ContainsKey(achr.Record.LevelModifier.Value)) {
                     // Create override
                     IPlacedNpc achrOverride = achr.GetOrAddAsOverride(state.PatchMod);
-                    achrOverride.LevelModifier = levelConversion[(Level)achr.Record.LevelModifier];
+                    achrOverride.LevelModifier = levelConversion[achr.Record.LevelModifier.Value];
                 }
 
                 achrCount++;
@@ -174,7 +176,7 @@ namespace SynNoMoreEasyEnemies
 
                     if (lvln.Flags.HasFlag(LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer)) {
                         var lvlnOverride = state.PatchMod.LeveledNpcs.GetOrAddAsOverride(lvln);
-                        lvlnOverride.Flags = (int)lvlnOverride.Flags - LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer;
+                        lvlnOverride.Flags = lvlnOverride.Flags.SetFlag(LeveledNpc.Flag.CalculateFromAllLevelsLessThanOrEqualPlayer, false);
                     }
 
                     lvlnCount++;
