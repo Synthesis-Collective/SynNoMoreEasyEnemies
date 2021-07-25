@@ -49,38 +49,56 @@ namespace SynNoMoreEasyEnemies
             Dictionary<Level, float> oldMults = new();
             Dictionary<Level, IGameSettingGetter> multGetters = new();
 
+            List<Level> levelsToFind = new List<Level>() {
+                Level.Easy,
+                Level.Medium,
+                Level.Hard,
+                Level.VeryHard
+            };
+
             foreach (var gmst in state.LoadOrder.PriorityOrder.OnlyEnabled().GameSetting().WinningOverrides()) {
+
                 // We only care about game settings that are floats
                 if (gmst is not IGameSettingFloatGetter floatGmst) continue;
                 if (floatGmst.EditorID == null) continue;
                 if (floatGmst.Data == null) continue;
 
                 // Only for our interesting settings
-                if (floatGmst.EditorID.Contains("fLeveledActorMultEasy")) {
+                if (floatGmst.EditorID.Contains("fLeveledActorMultEasy") && levelsToFind.Contains(Level.Easy)) {
                     var multEasy = floatGmst.Data;
                     oldMults.Add(Level.Easy, multEasy ?? 0f);
                     multGetters.Add(Level.Easy, gmst);
-                    Console.WriteLine($"Old fLeveledActorMultEasy: {multEasy}");
+                    Console.WriteLine($"Old fLeveledActorMultEasy: {gmst.FormKey}:{multEasy}");
+                    levelsToFind.Remove(Level.Easy);
                 }
-                else if (floatGmst.EditorID.Contains("fLeveledActorMultMedium")) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultMedium") && levelsToFind.Contains(Level.Medium)) {
                     var multMedium = floatGmst.Data;
                     oldMults.Add(Level.Medium, multMedium ?? 0f);
                     multGetters.Add(Level.Medium, gmst);
-                    Console.WriteLine($"Old fLeveledActorMultMedium: {multMedium}");
+                    Console.WriteLine($"Old fLeveledActorMultMedium: {gmst.FormKey}:{multMedium}");
+                    levelsToFind.Remove(Level.Medium);
                 }
                 else if (floatGmst.EditorID.Contains("fLeveledActorMultHard")) {
                     var multHard = floatGmst.Data;
                     oldMults.Add(Level.Hard, multHard ?? 0f);
                     multGetters.Add(Level.Hard, gmst);
-                    Console.WriteLine($"Old fLeveledActorMultHard: {multHard}");
+                    Console.WriteLine($"Old fLeveledActorMultHard: {gmst.FormKey}:{multHard}");
+                    levelsToFind.Remove(Level.Hard);
                 }
                 else if (floatGmst.EditorID.Contains("fLeveledActorMultVeryHard")) {
                     var multVeryHard = floatGmst.Data;
                     oldMults.Add(Level.VeryHard, multVeryHard ?? 0f);
                     multGetters.Add(Level.VeryHard, gmst);
-                    Console.WriteLine($"Old fLeveledActorMultVeryHard: {multVeryHard}");
+                    Console.WriteLine($"Old fLeveledActorMultVeryHard: {gmst.FormKey}:{multVeryHard}");
+                    levelsToFind.Remove(Level.VeryHard);
                 }
+
+                if (levelsToFind.Count == 0) {
+                    break;
+				}
             }
+
+            return;
 
             // Create new multiplier overrides
             switch (LevelModifierToReplace) {
