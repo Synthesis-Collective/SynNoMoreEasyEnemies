@@ -78,14 +78,14 @@ namespace SynNoMoreEasyEnemies
                     Console.WriteLine($"Old fLeveledActorMultMedium: {gmst.FormKey}:{multMedium}");
                     levelsToFind.Remove(Level.Medium);
                 }
-                else if (floatGmst.EditorID.Contains("fLeveledActorMultHard")) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultHard") && levelsToFind.Contains(Level.Hard)) {
                     var multHard = floatGmst.Data;
                     oldMults.Add(Level.Hard, multHard ?? 0f);
                     multGetters.Add(Level.Hard, gmst);
                     Console.WriteLine($"Old fLeveledActorMultHard: {gmst.FormKey}:{multHard}");
                     levelsToFind.Remove(Level.Hard);
                 }
-                else if (floatGmst.EditorID.Contains("fLeveledActorMultVeryHard")) {
+                else if (floatGmst.EditorID.Contains("fLeveledActorMultVeryHard") && levelsToFind.Contains(Level.VeryHard)) {
                     var multVeryHard = floatGmst.Data;
                     oldMults.Add(Level.VeryHard, multVeryHard ?? 0f);
                     multGetters.Add(Level.VeryHard, gmst);
@@ -97,8 +97,6 @@ namespace SynNoMoreEasyEnemies
                     break;
 				}
             }
-
-            return;
 
             // Create new multiplier overrides
             switch (LevelModifierToReplace) {
